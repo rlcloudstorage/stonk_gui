@@ -8,20 +8,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-root_dir = os.path.dirname(
-    os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-)))
+root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 src_dir = os.path.join(root_dir, 'src/')
+# check 'work_dir' exists, if not create it
+os.makedirs(os.path.join(root_dir, 'work_dir'), exist_ok=True)
 work_dir = os.path.join(root_dir, 'work_dir/')
 pkg_dir = os.path.join(root_dir, 'src/pkg')
 config_file = os.path.join(src_dir, 'config.ini')
 logger_conf = os.path.join(src_dir, 'logger.ini')
 
 logging.config.fileConfig(fname=logger_conf)
-logging.getLogger('PyQt5.uic').setLevel(logging.WARNING)
-logging.getLogger('unittest').setLevel(logging.WARNING)
 logger = logging.getLogger(f"  === Starting stonk_gui app - src/{__name__}/__init__.py ===")
 
 # Create getlist() converter, used for reading ticker symbols

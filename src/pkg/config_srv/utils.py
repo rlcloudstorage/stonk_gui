@@ -3,6 +3,7 @@ get_arg_value()\n
 update_debug()\n
 update_list()\n
 write_file()"""
+
 import logging
 
 from configparser import ConfigParser
@@ -13,33 +14,36 @@ from pkg import DEBUG
 logger = logging.getLogger(__name__)
 
 
-def get_arg_value(ctx: dict)->str:
+def get_arg_value(ctx: dict) -> str:
     """Return first value from arguments tuple."""
-    if DEBUG: logger.debug(f"get_arg_value(ctx={ctx}")
+    if DEBUG:
+        logger.debug(f"get_arg_value(ctx={ctx}")
 
-    new_value = ctx['interface']['arguments'][0]
+    new_value = ctx["interface"]["arguments"][0]
     return new_value
 
 
 def update_debug(ctx: dict):
     """Enter any character to toggle debug (logging) status."""
-    if DEBUG: logger.debug(f"update_debug(ctx={ctx}")
+    if DEBUG:
+        logger.debug(f"update_debug(ctx={ctx}")
 
     # Toggle current boolean value
-    new_value = not ctx['default']['debug']
+    new_value = not ctx["default"]["debug"]
     return new_value
 
 
 def update_list(ctx: dict):
     """Set the default list of items to download."""
     # Get service, arguments, and opt_trans
-    service = ctx['interface']['service']
-    arguments = list(ctx['interface']['arguments'])
-    opt_trans = ctx['interface']['opt_trans']
+    service = ctx["interface"]["service"]
+    arguments = list(ctx["interface"]["arguments"])
+    opt_trans = ctx["interface"]["opt_trans"]
 
-    cur_list = ctx[service][opt_trans].split(' ')
+    cur_list = ctx[service][opt_trans].split(" ")
 
-    if DEBUG: logger.debug(f"update_list(ctx={ctx})")
+    if DEBUG:
+        logger.debug(f"update_list(ctx={ctx})")
 
     extend_list, remove_list = [], []  # create lists
 
@@ -60,26 +64,24 @@ def update_list(ctx: dict):
             cur_list.remove(r)
 
     # Convert symbol list to string
-    new_value = ', '.join(cur_list).replace(',', '')
+    new_value = ", ".join(cur_list).replace(",", "")
     return new_value
 
 
 def write_file(ctx: dict):
     """Write new value to the appropriate config file"""
-    if DEBUG: logger.debug(f"write_file(ctx={ctx})")
+    if DEBUG:
+        logger.debug(f"write_file(ctx={ctx})")
 
     # Extract some config info from context object
-    config_name = ctx['interface']['config_file']
-    config_file = ctx['default'][config_name]
-    section = ctx['interface']['section']
-    option = ctx['interface']['opt_trans']
-    new_value = ctx['interface']['new_value']
+    config_name = ctx["interface"]["config_file"]
+    config_file = ctx["default"][config_name]
+    section = ctx["interface"]["section"]
+    option = ctx["interface"]["opt_trans"]
+    new_value = ctx["interface"]["new_value"]
 
     # Create getlist() converter, used for reading ticker symbols
-    config_obj = ConfigParser(
-        allow_no_value=True,
-        converters={'list': lambda x: [i.strip() for i in x.split(',')]}
-        )
+    config_obj = ConfigParser(allow_no_value=True, converters={"list": lambda x: [i.strip() for i in x.split(",")]})
     try:
         config_obj.read(config_file)
     except Exception as e:
@@ -92,5 +94,5 @@ def write_file(ctx: dict):
 
     # import sys
     # config_obj.write(sys.stdout)
-    with open(config_file, 'w') as cf:
+    with open(config_file, "w") as cf:
         config_obj.write(cf)
